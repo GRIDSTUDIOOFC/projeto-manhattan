@@ -32,6 +32,7 @@ def check_for_updates(current_version):
         response = requests.get(VERSION_URL)
         response.raise_for_status()
         latest_version = response.text.strip()
+        print(f"Versão atual: {current_version}, Versão mais recente: {latest_version}")
         if latest_version != current_version:
             print(f"Nova versão disponível: {latest_version}")
             return latest_version
@@ -57,18 +58,23 @@ def download_new_exe():
 
 def replace_exe(new_exe_path):
     try:
-        # Fechar o launcher atual
         current_exe = sys.argv[0]
         print(f"Fechando o launcher atual: {current_exe}")
+        
         # Esperar um pouco para garantir que o processo esteja realmente encerrado
         time.sleep(2)
 
-        # Substituir o executável antigo pelo novo
-        os.remove(current_exe)  # Remove o executável atual
-        shutil.move(new_exe_path, current_exe)  # Move o novo executável para o local do antigo
+        # Remover o executável atual
+        if os.path.exists(current_exe):
+            os.remove(current_exe)
+            print(f"Executável antigo '{current_exe}' removido com sucesso.")
+        else:
+            print(f"Executável antigo '{current_exe}' não encontrado.")
 
+        # Mover o novo executável para o local do antigo
+        shutil.move(new_exe_path, current_exe)
         print("Executável substituído com sucesso.")
-        
+
         # Reexecutar o novo executável
         subprocess.Popen([current_exe])
         sys.exit()
@@ -76,7 +82,7 @@ def replace_exe(new_exe_path):
         print(f"Erro ao substituir o executável: {e}")
 
 def update_launcher():
-    current_version = "3.0"  # Versão atual do launcher
+    current_version = "1.0"  # Versão atual do launcher
     new_version = check_for_updates(current_version)
     
     if new_version:
@@ -156,7 +162,7 @@ def show_animation():
             canvas.delete("all")
             canvas.create_image(frame_width // 2, frame_height // 2, image=image_list[current_image])
             current_image = (current_image + 1) % len(image_list)
-            root.after(1000, update_image)  # Troca de imagem a cada 5 segundos
+            root.after(5000, update_image)  # Troca de imagem a cada 5 segundos
         else:
             print("Todas as imagens foram exibidas.")
 

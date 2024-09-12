@@ -59,13 +59,13 @@ def replace_exe(new_exe_path):
     try:
         # Fechar o launcher atual
         current_exe = sys.argv[0]
+        print(f"Fechando o launcher atual: {current_exe}")
         # Esperar um pouco para garantir que o processo esteja realmente encerrado
         time.sleep(2)
 
         # Substituir o executável antigo pelo novo
-        temp_path = os.path.join(tempfile.gettempdir(), "launcher_temp.exe")
-        shutil.move(new_exe_path, temp_path)
-        os.rename(temp_path, current_exe)
+        os.remove(current_exe)  # Remove o executável atual
+        shutil.move(new_exe_path, current_exe)  # Move o novo executável para o local do antigo
 
         print("Executável substituído com sucesso.")
         
@@ -76,7 +76,7 @@ def replace_exe(new_exe_path):
         print(f"Erro ao substituir o executável: {e}")
 
 def update_launcher():
-    current_version = "1.3"  # Versão atual do launcher
+    current_version = "1.4"  # Versão atual do launcher
     new_version = check_for_updates(current_version)
     
     if new_version:

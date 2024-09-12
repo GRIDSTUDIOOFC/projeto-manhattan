@@ -59,7 +59,7 @@ def run_updater():
     sys.exit()
 
 def update_launcher():
-    current_version = "1.0"  # Versão atual do launcher
+    current_version = "1.1"  # Versão atual do launcher
     new_version = check_for_updates(current_version)
     
     if new_version:

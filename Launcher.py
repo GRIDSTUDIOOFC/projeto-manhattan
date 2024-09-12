@@ -57,12 +57,16 @@ def download_new_exe():
 
 def replace_exe(new_exe_path):
     try:
-        # Esperar o processo atual terminar
-        time.sleep(5)
+        # Fechar o launcher atual
+        current_exe = sys.argv[0]
+        # Esperar um pouco para garantir que o processo esteja realmente encerrado
+        time.sleep(2)
 
         # Substituir o executável antigo pelo novo
-        current_exe = sys.argv[0]
-        shutil.move(new_exe_path, current_exe)
+        temp_path = os.path.join(tempfile.gettempdir(), "launcher_temp.exe")
+        shutil.move(new_exe_path, temp_path)
+        os.rename(temp_path, current_exe)
+
         print("Executável substituído com sucesso.")
         
         # Reexecutar o novo executável
@@ -72,7 +76,7 @@ def replace_exe(new_exe_path):
         print(f"Erro ao substituir o executável: {e}")
 
 def update_launcher():
-    current_version = "1.2"  # Versão atual do launcher
+    current_version = "1.3"  # Versão atual do launcher
     new_version = check_for_updates(current_version)
     
     if new_version:
@@ -192,22 +196,24 @@ def start_loading(root, script_version):
     style.configure("Custom.Horizontal.TProgressbar", troughcolor='blue', background='blue')
 
     total_steps = 100
-    step_duration = 15
+    step_duration = 50
 
     def update_progress(step):
-        if step <= total_steps:
-            progress_bar["value"] = step
+        progress_bar['value'] = step
+        root.update_idletasks()
+        if step < total_steps:
             root.after(step_duration, update_progress, step + 1)
         else:
-            root.destroy()
-            main(script_version.get())
+            root.after(500, lambda: progress_bar.destroy())
+            root.after(500, lambda: show_animation())
+            root.after(500, lambda: main(script_version.get().lower().replace("versão 1", "versao1")))
 
-    root.after(0, update_progress, 0)
+    update_progress(0)
 
 def main(script_version):
     if script_version == "versao1":
         script_url = "https://raw.githubusercontent.com/GRIDSTUDIOOFC/projeto-manhattan/main/scripts/SCRIPT.jsx"
-    elif script_version == "DEMO":
+    elif script_version == "demo":
         script_url = "https://raw.githubusercontent.com/GRIDSTUDIOOFC/projeto-manhattan/main/scripts/SCRIPT-DEMO.jsx"
     else:
         print("Versão do script desconhecida.")

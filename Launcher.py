@@ -76,7 +76,7 @@ def replace_exe(new_exe_path):
         print(f"Erro ao substituir o executável: {e}")
 
 def update_launcher():
-    current_version = "2.0"  # Versão atual do launcher
+    current_version = "3.0"  # Versão atual do launcher
     new_version = check_for_updates(current_version)
     
     if new_version:
@@ -156,7 +156,7 @@ def show_animation():
             canvas.delete("all")
             canvas.create_image(frame_width // 2, frame_height // 2, image=image_list[current_image])
             current_image = (current_image + 1) % len(image_list)
-            root.after(5000, update_image)  # Troca de imagem a cada 5 segundos
+            root.after(1000, update_image)  # Troca de imagem a cada 5 segundos
         else:
             print("Todas as imagens foram exibidas.")
 

@@ -76,7 +76,7 @@ def replace_exe(new_exe_path):
         print(f"Erro ao substituir o executável: {e}")
 
 def update_launcher():
-    current_version = "1.4"  # Versão atual do launcher
+    current_version = "1.5"  # Versão atual do launcher
     new_version = check_for_updates(current_version)
     
     if new_version:

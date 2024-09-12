@@ -7,6 +7,7 @@ import subprocess
 import time
 import shutil
 import tempfile
+import stat
 from io import BytesIO
 import sys
 
@@ -45,26 +46,39 @@ def download_new_exe():
     try:
         response = requests.get(EXE_URL, stream=True)
         response.raise_for_status()
-        with open("launcher_new.exe", 'wb') as new_exe:
+        temp_path = os.path.join(tempfile.gettempdir(), "launcher_new.exe")
+        with open(temp_path, 'wb') as new_exe:
             shutil.copyfileobj(response.raw, new_exe)
         print("Novo launcher baixado com sucesso.")
-        return True
+        return temp_path
     except requests.exceptions.RequestException as e:
         print(f"Erro ao baixar nova versão do launcher: {e}")
-        return False
+        return None
 
-def run_updater():
-    print("Iniciando processo de atualização...")
-    subprocess.Popen(["launcher_new.exe"])
-    sys.exit()
+def replace_exe(new_exe_path):
+    try:
+        # Esperar o processo atual terminar
+        time.sleep(5)
+
+        # Substituir o executável antigo pelo novo
+        current_exe = sys.argv[0]
+        shutil.move(new_exe_path, current_exe)
+        print("Executável substituído com sucesso.")
+        
+        # Reexecutar o novo executável
+        subprocess.Popen([current_exe])
+        sys.exit()
+    except Exception as e:
+        print(f"Erro ao substituir o executável: {e}")
 
 def update_launcher():
-    current_version = "1.1"  # Versão atual do launcher
+    current_version = "1.2"  # Versão atual do launcher
     new_version = check_for_updates(current_version)
     
     if new_version:
-        if download_new_exe():
-            run_updater()
+        new_exe_path = download_new_exe()
+        if new_exe_path:
+            replace_exe(new_exe_path)
 
 def show_animation():
     root = tk.Tk()
@@ -262,5 +276,5 @@ def main(script_version):
     
     print("O script foi executado e removido com sucesso.")
 
-# Mostrar a animação
-show_animation()
+if __name__ == "__main__":
+    show_animation()

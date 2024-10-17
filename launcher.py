@@ -76,7 +76,7 @@ def replace_exe(new_exe_path):
         print(f"Erro ao substituir o executável: {e}")
 
 def update_launcher():
-    current_version = "1.0"  # Versão atual do launcher
+    current_version = "1.2"  # Versão atual do launcher
     new_version = check_for_updates(current_version)
     
     if new_version:
@@ -163,8 +163,8 @@ def show_animation():
     update_image()
 
     # Frame para a seleção da versão
-    selection_frame = tk.Frame(root, bg="white", padx=5, pady=5, bd=0)
-    selection_frame.place(x=10, y=window_height - 40, anchor=tk.W)
+    selection_frame = tk.Frame(root, bg="white", padx=4, pady=4, bd=0)
+    selection_frame.place(x=10, y=window_height - 60, anchor=tk.W)
 
     # Título para a seleção, com fonte menor
     tk.Label(selection_frame, text="Versão:", bg="white", font=("Arial", 8)).pack(side=tk.LEFT, padx=5)
@@ -176,17 +176,18 @@ def show_animation():
 
     # Botão START
     start_button = tk.Button(root, text="START", command=lambda: start_loading(root, script_version), bg="white", fg="black", font=("Arial", 12, "bold"), width=8, height=1)
-    start_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
+    start_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)  # Ajuste a posição Y
 
     # Botão de atualização
     update_button = tk.Button(root, text="Verificar Atualizações", command=update_launcher)
-    update_button.place(relx=0.1, rely=0.9, anchor=tk.CENTER)
+    update_button.place(relx=0.9, rely=0.9, anchor=tk.CENTER)  # Colocado abaixo do botão START
+
 
     root.mainloop()
 
 def start_loading(root, script_version):
+    # Remover a destruição do botão START
     start_button = root.children['!button']
-    start_button.destroy()
 
     progress_bar = ttk.Progressbar(root, orient="horizontal", mode="determinate", length=655, style="Custom.Horizontal.TProgressbar")
     progress_bar.place(relx=0.5, rely=0.9, anchor=tk.CENTER, y=-30)
@@ -195,8 +196,8 @@ def start_loading(root, script_version):
     style.theme_use('clam')
     style.configure("Custom.Horizontal.TProgressbar", troughcolor='blue', background='blue')
 
-    total_steps = 100
-    step_duration = 50
+    total_steps = 97
+    step_duration = 10
 
     def update_progress(step):
         progress_bar['value'] = step
@@ -205,8 +206,8 @@ def start_loading(root, script_version):
             root.after(step_duration, update_progress, step + 1)
         else:
             root.after(500, lambda: progress_bar.destroy())
-            root.after(500, lambda: show_animation())
-            root.after(500, lambda: main(script_version.get().lower().replace("versão 1", "versao1")))
+            # Execute the selected script here instead of showing a new window
+            main(script_version.get().lower().replace("versão 1", "versao1"))
 
     update_progress(0)
 

@@ -46,11 +46,15 @@ def download_new_exe():
     try:
         response = requests.get(EXE_URL, stream=True)
         response.raise_for_status()
-        temp_path = os.path.join(tempfile.gettempdir(), "launcher_new.exe")
-        with open(temp_path, 'wb') as new_exe:
+        
+        # Baixando para a área de trabalho do usuário
+        desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+        new_exe_path = os.path.join(desktop_path, "launcher_new.exe")
+        
+        with open(new_exe_path, 'wb') as new_exe:
             shutil.copyfileobj(response.raw, new_exe)
         print("Novo launcher baixado com sucesso.")
-        return temp_path
+        return new_exe_path
     except requests.exceptions.RequestException as e:
         print(f"Erro ao baixar nova versão do launcher: {e}")
         return None
@@ -63,10 +67,7 @@ def replace_exe(new_exe_path):
         time.sleep(2)
 
         # Substituir o executável antigo pelo novo
-        temp_path = os.path.join(tempfile.gettempdir(), "launcher_temp.exe")
-        shutil.move(new_exe_path, temp_path)
-        os.rename(temp_path, current_exe)
-
+        shutil.move(new_exe_path, current_exe)
         print("Executável substituído com sucesso.")
         
         # Reexecutar o novo executável
